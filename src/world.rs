@@ -2,7 +2,7 @@
 use crate::tile::Tile;
 use std::collections::HashMap;
 pub struct World {
-    tiles: HashMap<(i32, i32), Tile>,
+    pub tiles: HashMap<(i32, i32), Tile>,
 }
 
 impl World {
@@ -30,6 +30,10 @@ impl World {
         let mut tiles: HashMap<(i32, i32), Tile> = HashMap::new();
         // load file
         let world_data = std::fs::read_to_string(path).expect("Unable to read file");
+        // if there is more than one character P in the file, panic
+        if world_data.matches('P').count() > 1 {
+            panic!("More than one player in world file");
+        }
         // parse file
         let mut x = 0;
         let mut y = 0;
@@ -39,7 +43,7 @@ impl World {
                     ' ' => tiles.insert((x,y), Tile::Empty),
                     'P' => tiles.insert((x,y), Tile::Player),
                     'W' => tiles.insert((x,y), Tile::Wall),
-                    _ => panic!("Invalid character in world file at {}, {}", x, y)
+                    _ => panic!("Invalid character in world file at {}:{}", y+1, x+1)
                 };
                 x += 1;
             }
