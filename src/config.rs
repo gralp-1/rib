@@ -1,13 +1,15 @@
-use raylib::prelude::Color;
+
+use raylib::prelude::{Color, KeyboardKey};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Config {
-
+    // general parameters
     pub window_width:  i32,
     pub window_height: i32,
     pub window_name:   String,
-    pub draw_outlines:  bool,
+    pub world_file:    String,
+    pub draw_outlines: bool,
 
     // colours
     pub wall_colour:     String,
@@ -15,7 +17,6 @@ pub struct Config {
     pub empty_colour:    String,
     pub outline_colour:  String
 }
-
 impl Config {
 
     pub fn load_config() -> Self {
@@ -41,6 +42,15 @@ impl Config {
     pub fn outline_colour(&self) -> Color {
         // return the outline colour as a raylib colour
         Color::from_hex(self.outline_colour.as_str()).expect("Unable to parse outline colour from config")
+    }
+    pub fn config_checks(&self) {
+        // check the width and height are multiples of 32
+        if self.window_width % 32 != 0 {
+            panic!("Window width must be a multiple of 32");
+        }
+        if self.window_height % 32 != 0 {
+            panic!("Window height must be a multiple of 32");
+        }
     }
 }
 

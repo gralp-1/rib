@@ -2,6 +2,7 @@ pub mod tile;
 pub mod world;
 pub mod config;
 pub mod player;
+use player::Direction;
 use raylib::prelude::*;
 use crate::tile::Tile;
 use crate::world::World;
@@ -9,12 +10,13 @@ use crate::config::Config;
 use crate::player::Player;
 
 fn main() {
-    let world = World::new("./world.txt");
 
     // get the position of the player and set it to an empty tile
-    let player_pos = world.player_pos;
     let config = Config::load_config();
-    let player: Player = Player::new(player_pos);
+    config.config_checks();
+    let mut world = World::new(config.clone());
+    let player_pos = world.player_pos;
+    let mut player: Player = Player::new(player_pos);
     let (mut rl, thread) = raylib::init()
         .size(config.window_width, config.window_height)
         .title(&config.window_name)
@@ -23,6 +25,20 @@ fn main() {
     
     while !rl.window_should_close() {
         let mut d = rl.begin_drawing(&thread);
+
+        if d.is_key_pressed(KeyboardKey::KEY_UP) {
+            world = player.move_player(Direction::Up, world);
+        }
+        if d.is_key_pressed(KeyboardKey::KEY_DOWN) {
+            world = player.move_player(Direction::Down, world);
+        }
+        if d.is_key_pressed(KeyboardKey::KEY_LEFT) {
+            world = player.move_player(Direction::Left, world);
+        }
+        if d.is_key_pressed(KeyboardKey::KEY_RIGHT) {
+            world = player.move_player(Direction::Right, world);
+        }
+
 
 
         // Draw the world as squares with a size of 32x32, with a 1px border and the colour of the tile in the world file
@@ -57,4 +73,6 @@ fn main() {
         }
         d.clear_background(Color::BLACK);
     }
+    // save world
+    world.save_world();
 }
