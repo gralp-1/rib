@@ -233,6 +233,7 @@ dependencies = [
  "gilrs",
  "raylib",
  "ron",
+ "serde",
 ]
 
 [[package]]

@@ -1,0 +1,12 @@
+Config (
+    window_width:  800,
+    window_height: 600,
+    window_name:   "Huh",
+    draw_outlines: true,
+
+    // colours
+    wall_colour:    "FFFFFF",
+    player_colour:  "FF0000",
+    empty_colour:   "000000",
+    outline_colour: "0000FF"
+)
