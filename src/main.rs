@@ -5,8 +5,7 @@ pub mod player;
 pub mod draw_sections;
 mod update_sections;
 use raylib::prelude::*;
-use raylib::rgui::RaylibDrawGui;
-use crate::draw_sections::draw_tiles;
+use crate::draw_sections::{draw_tiles, draw_time, end_sceen};
 use crate::update_sections::control_update;
 use crate::world::World;
 use crate::config::Config;
@@ -32,6 +31,7 @@ fn main() {
     
     
     let mut time = 0.0;
+    let mut timer_enabled = true;
     while !rl.window_should_close() {
 
         let mut d = rl.begin_drawing(&thread);
@@ -39,17 +39,30 @@ fn main() {
 
         world = control_update(world, &mut player, &d);
 
-        // Draw the world as squares with a size of 32x32, with a 1px border and the colour of the tile in the world file
         draw_tiles(&mut world, &config, &mut d);
+
+
+        draw_time(time, &config, &mut d);
+
+        if timer_enabled {
+            time += 1.0*d.get_frame_time();
+        }
+        
+        // TODO(gralp): end screen restarting, quitting (use an enum)
+        // TODO(gralp): fix positioning and colour and look into styling it
+        // TODO(gralp): move whole time system into update_sections
+
         if time as i32 == config.default_time as i32 {
-            break;
+            timer_enabled = false;
+            if end_sceen(&config, &mut d, (100.0, 100.0)) {
+                timer_enabled = true;
+                time = config.default_time;
+            } else {
+                std::process::exit(0);
+            }
         }
-        if d.gui_button(rrect(0,0,50,50), Some(rstr!("hi"))) {
-            println!("hi");
-        }
-        // d.draw_text(&format!("Time: {}", (config.default_time - time) as i32), 30, 30, 20, Color::WHITE);
-        time += (1.0*d.get_frame_time())/1000.0;
-        println!("{}", time/1000.0);
+
+        println!("{}", time);
 
     }
     // save world

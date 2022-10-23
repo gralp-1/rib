@@ -39,12 +39,17 @@ fn draw_outlines(position: &(i32, i32), config: &Config, d: &mut RaylibDrawHandl
     }
 }
 
-pub fn end_sceen(config: &Config, d: &mut RaylibDrawHandle) {
-    d.draw_text("Game Over", 100, 100, 50, config.gui_colour());
+pub fn draw_time(time: f32, config: &Config, d: &mut RaylibDrawHandle) {
+    d.draw_text(&format!("Time: {}", (config.default_time - time) as i32), 30, 30, 20, config.timer_colour());
+}
+
+pub fn end_sceen(config: &Config, d: &mut RaylibDrawHandle, pos: (f32, f32)) -> bool {
+    d.draw_text("Ran out of time", pos.0 as i32, pos.1 as i32, 50, config.gui_colour());
     // restart and quit button
-    d.draw_rectangle(100, 200, 100, 50, config.gui_colour());
-    d.draw_rectangle(300, 200, 100, 50, config.gui_colour());
-    d.draw_text("Restart", 100, 200, 20, config.gui_text_colour());
-    d.draw_text("Quit", 300, 200, 20, config.gui_text_colour());
+    if d.gui_button(Rectangle::new(pos.0, pos.1 + 50.0, 100.0, 50.0), Some(rstr!("Quit"))) {
+        false
+    } else {
+        true
+    }
 
 }

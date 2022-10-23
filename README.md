@@ -1,5 +1,10 @@
 # WIP
 
+## Higher level things to do
+
+- World editor
+- Make a game template
+
 ## What is it?
 
 A game made in raylib and rust
