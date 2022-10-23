@@ -3,5 +3,6 @@
 pub enum Tile {
     Empty,
     Player,
-    Wall
+    Wall,
+    Enemy
 }

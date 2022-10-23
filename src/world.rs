@@ -27,6 +27,7 @@ impl World {
             for c in 0..(config.window_width / 32) {
                 match line.chars().nth(c as usize) {
                     Some(' ') => tiles.insert((x,y), Tile::Empty),
+                    Some('E') => tiles.insert((x,y), Tile::Enemy),
                     Some('P') => {player_pos = (x,y); tiles.insert((x,y), Tile::Player)},
                     Some('W') => tiles.insert((x,y), Tile::Wall),
                     _ => tiles.insert((x,y), Tile::Empty),

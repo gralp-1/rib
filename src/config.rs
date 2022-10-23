@@ -1,5 +1,5 @@
 
-use raylib::prelude::{Color, KeyboardKey};
+use raylib::prelude::{Color};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -10,11 +10,16 @@ pub struct Config {
     pub window_name:   String,
     pub world_file:    String,
     pub draw_outlines: bool,
+    pub default_time:  f32,
 
     // colours
+    pub timer_colour:    String,
+    pub gui_colour:      String,
+    pub gui_text_colour: String,
     pub wall_colour:     String,
     pub player_colour:   String,
     pub empty_colour:    String,
+    pub enemy_colour:    String,
     pub outline_colour:  String
 }
 impl Config {
@@ -42,6 +47,22 @@ impl Config {
     pub fn outline_colour(&self) -> Color {
         // return the outline colour as a raylib colour
         Color::from_hex(self.outline_colour.as_str()).expect("Unable to parse outline colour from config")
+    }
+    pub fn enemy_colour(&self) -> Color {
+        // return the enemy colour as a raylib colour
+        Color::from_hex(self.enemy_colour.as_str()).expect("Unable to parse enemy colour from config")
+    }
+    pub fn gui_colour(&self) -> Color {
+        // return the gui colour as a raylib colour
+        Color::from_hex(self.gui_colour.as_str()).expect("Unable to parse gui colour from config")
+    }
+    pub fn timer_colour(&self) -> Color {
+        // return the timer colour as a raylib colour
+        Color::from_hex(self.timer_colour.as_str()).expect("Unable to parse timer colour from config")
+    }
+    pub fn gui_text_colour(&self) -> Color {
+        // return the gui text colour as a raylib colour
+        Color::from_hex(self.gui_text_colour.as_str()).expect("Unable to parse gui text colour from config")
     }
     pub fn config_checks(&self) {
         // check the width and height are multiples of 32

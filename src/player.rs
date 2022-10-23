@@ -4,6 +4,7 @@ use crate::world::World;
 
 pub struct Player {
     pub pos: (i32, i32),
+    pub health: i32,
 }
 
 #[derive(Debug, Clone, Copy, Serialize)]
@@ -17,7 +18,8 @@ pub enum Direction {
 impl Player {
     pub fn new(pos: (i32, i32)) -> Self {
         Player {
-            pos
+            pos,
+            health: 50,
         }
     }
     pub fn move_player(&mut self, direction: Direction, mut world: World) -> World {
@@ -63,5 +65,10 @@ impl Player {
                 world
             },
         }
+    }
+
+    pub fn update() {
+        // update the player
+
     }
 }

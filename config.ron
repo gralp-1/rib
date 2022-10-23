@@ -3,11 +3,16 @@ Config (
     window_height: 1024,
     window_name:   "Huh",
     draw_outlines: true,
-    world_file: "./world",
+    world_file:    "./world",
+    default_time:  5.0,
 
     // colours
-    wall_colour:    "FFFFFF",
-    player_colour:  "FF0000",
-    empty_colour:   "000000",
-    outline_colour: "0000FF"
+    gui_text_colour: "FFFFFF",
+    gui_colour:      "C8C8C8",
+    timer_colour:    "FFFFFF",
+    wall_colour:     "FFFFFF",
+    player_colour:   "FF0000",
+    empty_colour:    "000000",
+    enemy_colour:    "00FF00",
+    outline_colour:  "0000FF"
 )
