@@ -9,8 +9,9 @@ pub struct Config {
     pub window_height: i32,
     pub window_name:   String,
     pub world_file:    String,
-    pub draw_outlines: bool,
     pub default_time:  f32,
+    pub debug:         bool,
+    pub log_file:      String,
 
     // colours
     pub timer_colour:    String,

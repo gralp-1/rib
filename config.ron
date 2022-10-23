@@ -4,11 +4,13 @@ Config (
     window_name:   "Huh",
     draw_outlines: true,
     world_file:    "./world",
-    default_time:  5.0,
+    default_time:  200.0,
+    debug:         true,
+    log_file:      "./rib.log",
 
     // colours
     gui_text_colour: "FFFFFF",
-    gui_colour:      "C8C8C8",
+    gui_colour:      "eb5757",
     timer_colour:    "FFFFFF",
     wall_colour:     "FFFFFF",
     player_colour:   "FF0000",
