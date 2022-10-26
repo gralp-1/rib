@@ -1,4 +1,5 @@
 use rand::prelude::Distribution;
+
 use serde::Serialize;
 
 use crate::world::World;
@@ -35,7 +36,9 @@ impl Player {
             health: 50,
         }
     }
+    
     pub fn move_player(&mut self, direction: Direction, mut world: World) -> World {
+        puffin::profile_function!("move_player");
         // check if the tile in the direction is empty
         // if it is, move the player
         // if it isn't, do nothing
@@ -78,10 +81,5 @@ impl Player {
                 world
             },
         }
-    }
-
-    pub fn update() {
-        // update the player
-
     }
 }

@@ -7,7 +7,7 @@ pub mod draw_sections;
 mod update_sections;
 use std::fs::File;
 
-use draw_sections::draw_lines;
+use puffin::{profile_scope, set_scopes_on, GlobalProfiler};
 use raylib::prelude::*;
 use simplelog::{CombinedLogger, TermLogger, LevelFilter, TerminalMode, ColorChoice, WriteLogger};
 use crate::draw_sections::{draw_tiles, draw_time, end_sceen, EndScreenSignal};
@@ -17,10 +17,8 @@ use crate::config::Config;
 use crate::player::Player;
 
 fn main() {
-    // get the position of the player and set it to an empty tile
     let config = Config::load_config();
     config.config_checks();
-
     CombinedLogger::init(
         vec![
             TermLogger::new(LevelFilter::Info, simplelog::Config::default(), TerminalMode::Mixed, ColorChoice::Auto),
@@ -29,10 +27,19 @@ fn main() {
     ).unwrap();
     info!("Logger initialized");
 
-    let mut world = World::new(config.clone());
 
+
+    let server_addr = &format!("0.0.0.0:{}", puffin_http::DEFAULT_PORT);
+    let _puffin_server = puffin_http::Server::new(server_addr).unwrap();
+    info!("Puffin server started at {}", server_addr);
+    set_scopes_on(config.profile);
+    // profile_function!("main");
+
+
+    let mut world = World::new(config.clone());
     let player_pos = world.player.pos;
     let mut player: Player = Player::new(player_pos);
+
 
     let (mut rl, thread) = raylib::init()
         .size(config.window_width, config.window_height)
@@ -44,17 +51,17 @@ fn main() {
     let mut timer_enabled = true;
     let mut frame_counter = 0;
     while !rl.window_should_close() {
+        GlobalProfiler::lock().new_frame();
+        profile_scope!("game_loop");
 
         let mut d = rl.begin_drawing(&thread);
         d.clear_background(Color::BLACK);
+        draw_tiles(&world, &config, &mut d);
+        draw_time(time, &config, &mut d);
 
         if timer_enabled {
-            world = control_update(world, &mut player, &d);
+            world = control_update(world, &mut player, &mut d);
         }
-
-        draw_tiles(&mut world, &config, &mut d);
-        draw_time(time, &config, &mut d);
-        
         if timer_enabled {
             time += 1.0*d.get_frame_time();
         }
@@ -87,6 +94,7 @@ fn main() {
         frame_counter += 1;
 
     }
+    profile_scope!("serialize");
     // save world
     world.save_world();
 }

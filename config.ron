@@ -5,7 +5,8 @@ Config (
     draw_outlines: true,
     world_file:    "./world",
     default_time:  200.0,
-    debug:         true,
+    debug:         true, // SERIOUSLY effects performance
+    profile:       true,
     log_file:      "./rib.log",
 
     // colours

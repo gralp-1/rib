@@ -3,7 +3,7 @@ use crate::{world::World, player::Player};
 use raylib::prelude::*;
 use crate::player::Direction;
 
-pub fn control_update(world: World, player: &mut Player, d: &RaylibDrawHandle) -> World {
+pub fn control_update(world: World, player: &mut Player, d: &mut RaylibDrawHandle) -> World {
     if d.is_key_pressed(KeyboardKey::KEY_W) || d.is_key_pressed(KeyboardKey::KEY_UP) {
         return player.move_player(Direction::Up, world);
     }

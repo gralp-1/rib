@@ -11,6 +11,7 @@ pub struct Config {
     pub world_file:    String,
     pub default_time:  f32,
     pub debug:         bool,
+    pub profile:       bool,
     pub log_file:      String,
 
     // colours

@@ -1,15 +1,19 @@
+use puffin::{profile_function, profile_scope};
+
 // A grid of tiles
 use crate::{tile::Tile, config::Config, player::{Direction, Player}};
 use std::collections::HashMap;
 pub struct World {
     pub tiles: HashMap<(i32, i32), Tile>,
     pub config: Config,
-    pub player: Player
+    pub player: Player,
+    pub enemy_positions: Vec<(i32, i32)>,
 }
 
 impl World {
 
     pub fn new(config: Config) -> Self {
+        profile_scope!("world_new");
         // Load world from file at path
         // Return a new world
         let mut tiles: HashMap<(i32, i32), Tile> = HashMap::new();
@@ -23,11 +27,12 @@ impl World {
         let mut x = 0;
         let mut y = 0;
         let mut player_pos: (i32, i32) = (0, 0);
+        let mut enemy_positions: Vec<(i32, i32)> = Vec::new();
         for line in world_data.lines() {
             for c in 0..(config.window_width / 32) {
                 match line.chars().nth(c as usize) {
                     Some(' ') => tiles.insert((x,y), Tile::Empty),
-                    Some('E') => tiles.insert((x,y), Tile::Enemy),
+                    Some('E') => {enemy_positions.push((x, y)); tiles.insert((x,y), Tile::Enemy)},
                     Some('P') => {player_pos = (x,y); tiles.insert((x,y), Tile::Player)},
                     Some('W') => tiles.insert((x,y), Tile::Wall),
                     _ => tiles.insert((x,y), Tile::Empty),
@@ -41,10 +46,12 @@ impl World {
         World {
             tiles,
             player: Player::new(player_pos),
+            enemy_positions,
             config
         }
     }
     pub fn save_world(&self) {
+        profile_function!("save_world");
         // save the world to file
         // iterate through tiles, and write to file line by line
         let mut world_data = String::new();
@@ -66,32 +73,31 @@ impl World {
     }
 
     pub fn update_enemy_positions(&mut self) {
+        info!("Updating enemy positions");
+        profile_function!("update_enemy_positions");
         // move the enemies in any direction by one tile
         // if the enemy is next to the player, kill the player
 
         // get all the enemy positions
-        let mut enemy_positions: Vec<(i32, i32)> = Vec::new();
-        for (pos, tile) in &self.tiles {
-            if *tile == Tile::Enemy {
-                enemy_positions.push(*pos);
-            }
-        }
         // move the enemies
-        for (x,y) in enemy_positions {
+        let mut enemy_positions_vec= self.enemy_positions.clone();
+        for (x,y) in &self.enemy_positions {
             // get the direction to move in
             let direction: Direction = rand::random();
             // check if the tile in that direction is empty
-            let new_pos = match direction {
-                Direction::Up => (x, y-1),
-                Direction::Down => (x, y+1),
-                Direction::Left => (x-1, y),
-                Direction::Right => (x+1, y),
+            let new_pos: (i32, i32) = match direction {
+                Direction::Up =>    (*x,   *y-1),
+                Direction::Down =>  (*x,   *y+1),
+                Direction::Left =>  (*x-1, *y),
+                Direction::Right => (*x+1, *y),
             };
             match self.tiles.get(&new_pos) {
                 Some(Tile::Empty) => {
                     // move the enemy
-                    self.tiles.insert((x,y), Tile::Empty);
+                    self.tiles.insert((*x,*y), Tile::Empty);
                     self.tiles.insert(new_pos, Tile::Enemy);
+                    enemy_positions_vec.retain(|&pos| pos != (*x,*y));
+                    enemy_positions_vec.push(new_pos);
                 },
                 // Some(Tile::Player) => {
                 //     // kill the player
@@ -101,7 +107,8 @@ impl World {
                 //     self.player_pos = (0,0);
                 // },
                 _ => {},
-            }
+            };
         }
+        self.enemy_positions = enemy_positions_vec;
     }
 }
